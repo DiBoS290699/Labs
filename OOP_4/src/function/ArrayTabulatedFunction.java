@@ -1,6 +1,8 @@
 package function;
 
-public class ArrayTabulatedFunction implements TabulatedFunctionImpl{
+import java.io.Serializable;
+
+public class ArrayTabulatedFunction implements TabulatedFunctionImpl, Serializable {
     private FunctionPoint points[];         //Массив точек
     private int countPoints;                //количество точек
 
@@ -36,6 +38,7 @@ public class ArrayTabulatedFunction implements TabulatedFunctionImpl{
         this.countPoints = length;
     }
 
+    //Конструктор с заданным массивом точек
     public ArrayTabulatedFunction(FunctionPoint[] fpMas) throws IllegalArgumentException {
         int length = fpMas.length;
 

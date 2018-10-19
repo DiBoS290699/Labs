@@ -4,10 +4,14 @@ import function.FunctionImpl;
 
 public class Log implements FunctionImpl {
 
-    private double base = Math.E;
+    private double base;
 
     public Log(double base) {
         this.base = base;
+    }
+
+    public Log() {
+        this.base = Math.E;
     }
 
     @Override

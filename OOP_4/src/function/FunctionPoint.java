@@ -1,6 +1,8 @@
 package function;
 
-public class FunctionPoint {
+import java.io.Serializable;
+
+public class FunctionPoint implements Serializable {
     private double x;
     private double y;
     public FunctionPoint() {this.x = 0; this.y = 0;}           //Конструктор по умолчанию

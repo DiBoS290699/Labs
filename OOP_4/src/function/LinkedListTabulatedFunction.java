@@ -1,6 +1,8 @@
 package function;
 
-public class LinkedListTabulatedFunction implements TabulatedFunctionImpl {
+import java.io.Serializable;
+
+public class LinkedListTabulatedFunction implements TabulatedFunctionImpl, Serializable {
     private FunctionNode head = new FunctionNode();         //Всегда пустая голова
     private int size = 0;                   //Количество объектов в списке
 
@@ -16,6 +18,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunctionImpl {
 
     }
 
+    //Конструктор с заданным массивом точек
     public LinkedListTabulatedFunction(double leftX, double rightX, double[] values) throws IllegalArgumentException {
         if (leftX >= rightX || values.length < 2)
             throw new IllegalArgumentException("Error!");

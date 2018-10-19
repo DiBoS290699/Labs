@@ -55,12 +55,12 @@ public final class TabulatedFunctions {
     }
 
     public static void writeTabulatedFunction(TabulatedFunctionImpl function, Writer out) {
-        try (BufferedWriter w = new BufferedWriter(out)) {
+        try (BufferedWriter bw = new BufferedWriter(out)) {
             int pointsCount = function.getPointsCount();
-            w.write(pointsCount + " ");
+            bw.write(pointsCount + " ");
 
             for (int i = 0; i < pointsCount; ++i) {
-                w.write(function.getPointX(i) + " " + function.getPointY(i) + " ");
+                bw.write(function.getPointX(i) + " " + function.getPointY(i) + " ");
             }
 
         }
@@ -70,7 +70,25 @@ public final class TabulatedFunctions {
     }
 
     public static TabulatedFunctionImpl readTabulatedFunction(Reader in) {
+        try {
+            StreamTokenizer stream = new StreamTokenizer(in);
+            stream.nextToken();
+            int pointsCount = (int) stream.nval;
+            FunctionPoint[] fpMas = new FunctionPoint[pointsCount];
+            for (int i = 0; stream.nextToken() != StreamTokenizer.TT_EOF; ++i) {
+                double x = stream.nval;
+                stream.nextToken();
+                double y = stream.nval;
+                fpMas[i] = new FunctionPoint(x, y);
+            }
+            return new ArrayTabulatedFunction(fpMas);
+        }
 
+        catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
     }
 
 }
