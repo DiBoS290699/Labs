@@ -1,6 +1,5 @@
 import function.*;
 import function.basic.*;
-import function.meta.*;
 
 import java.io.*;
 import java.io.IOException;
@@ -61,7 +60,7 @@ public class Main {
 
         System.out.println("\nЗначения исходного log [0; 10]: " + tabLog);
 
-        System.out.println("Значения считаной exp [0; 10]: " + tabLog2);
+        System.out.println("Значения считаного log [0; 10]: " + tabLog2);
 
         TabulatedFunctionImpl tabLogExp=
                 TabulatedFunctions.tabulate(Functions.composition(new Log(), new Exp()), 0,10, 11 );
@@ -74,5 +73,6 @@ public class Main {
         TabulatedFunctionImpl tabLogExp2 = (TabulatedFunctionImpl) oin.readObject();
         System.out.println("Исходная сериализумеая функция: " + tabLogExp);
         System.out.println("Исходная сериализуемая функция: " + tabLogExp2);
+        oin.close();
     }
 }

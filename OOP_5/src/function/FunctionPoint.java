@@ -1,8 +1,9 @@
 package function;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-public class FunctionPoint implements Serializable {
+public class FunctionPoint implements Serializable, Cloneable {
     private double x;
     private double y;
     public FunctionPoint() {this.x = 0; this.y = 0;}           //Конструктор по умолчанию
@@ -16,8 +17,23 @@ public class FunctionPoint implements Serializable {
 
     @Override   //координаты точки
     public String toString() {
-        return "[" + x + ", " + y + "]";
+        return "(" + x + ", " + y + ")";
     }
 
+    @Override   //Метод равенства
+    public boolean equals(Object o) {
+        return o instanceof FunctionPoint &&
+                this.getX() == ((FunctionPoint) o).getX() &&
+                this.getY() == ((FunctionPoint) o).getY();
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }
