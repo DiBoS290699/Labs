@@ -13,4 +13,5 @@ public interface TabulatedFunctionImpl extends FunctionImpl, Cloneable {
     void deletePoint(int index)
             throws FunctionPointIndexOutOfBoundsException, IllegalStateException;
     void addPoint(FunctionPoint point) throws InappropriateFunctionPointException;
+    Object clone() throws CloneNotSupportedException;
 }

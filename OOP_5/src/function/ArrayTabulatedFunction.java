@@ -251,7 +251,6 @@ public class ArrayTabulatedFunction implements TabulatedFunctionImpl, Serializab
             hashPoints += points[i].hashCode();
         }
         return countPoints + hashPoints;
-        //return Objects.hash(countPoints, hashPoints);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package function;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class FunctionPoint implements Serializable, Cloneable {
     private double x;
@@ -17,7 +16,7 @@ public class FunctionPoint implements Serializable, Cloneable {
 
     @Override   //координаты точки
     public String toString() {
-        return "(" + x + ", " + y + ")";
+        return "(" + x + "; " + y + ")";
     }
 
     @Override   //Метод равенства
@@ -29,7 +28,10 @@ public class FunctionPoint implements Serializable, Cloneable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        long v1 = Double.doubleToLongBits(x);
+        long v2 = Double.doubleToLongBits(y);
+        return (int)(v1^(v1>>>32)) + (int)(v2^(v2>>>32));
+       // return Double.hashCode(x) + Double.hashCode(y);
     }
 
     @Override

@@ -1,7 +1,7 @@
 import function.*;
 
 public class Main {
-    public static void main(String[] args) throws InappropriateFunctionPointException, CloneNotSupportedException {
+    public static void main(String[] args) throws CloneNotSupportedException {
         double[] values = new double[11];
         for(int i = 1; i < 11; ++i)
             values[i] = i;
