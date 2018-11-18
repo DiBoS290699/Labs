@@ -1,8 +1,5 @@
 package GApplication;
 
-
-import javafx.stage.WindowEvent;
-
 import javax.swing.*;
 import java.awt.event.*;
 
