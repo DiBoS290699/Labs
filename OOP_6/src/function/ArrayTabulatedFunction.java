@@ -79,7 +79,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable, 
 
     //Гетер х точки по индексу
     public double getPointX(int index) throws FunctionPointIndexOutOfBoundsException {
-        if (index >= this.countPoints)
+        if (index >= this.countPoints || index < 0)
             throw new FunctionPointIndexOutOfBoundsException("Error!");
 
         return this.points[index].getX();
@@ -87,7 +87,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable, 
 
     //Гетер у точки по индексу
     public double getPointY(int index) throws FunctionPointIndexOutOfBoundsException {
-        if (index >= this.countPoints)
+        if (index >= this.countPoints || index < 0)
             throw new FunctionPointIndexOutOfBoundsException("Error!");
 
         return this.points[index].getY();
