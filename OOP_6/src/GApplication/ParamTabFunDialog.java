@@ -8,6 +8,9 @@ public class ParamTabFunDialog extends JDialog {
     public static final int CANCEL = 0;
     private int status;
 
+    private double leftBorder;
+    private double rightBorder;
+
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -21,7 +24,7 @@ public class ParamTabFunDialog extends JDialog {
     public ParamTabFunDialog() {
         setTitle("Function Parameters");
         setContentPane(contentPane);
-        setModal(true);
+        setModal(true);                 //Окно является поверх всех других
         setResizable(false);            //Запрещено изменять размер окна
         getRootPane().setDefaultButton(buttonOK);
         pointsCountSpinner.setModel(new SpinnerNumberModel(11, 2, Integer.MAX_VALUE, 1));
@@ -50,12 +53,13 @@ public class ParamTabFunDialog extends JDialog {
         this.status = OK;
 
         try{
-            double leftBorder = Double.parseDouble(leftDBTextField.getText());
-            double rightBorder = Double.parseDouble(rightDBTextField.getText());
+            this.leftBorder = Double.parseDouble(leftDBTextField.getText());
+            this.rightBorder = Double.parseDouble(rightDBTextField.getText());
             if (rightBorder <= leftBorder) {
                 throw new NumberFormatException();
             }
             setVisible(false);
+
         } catch(NumberFormatException e){
             JOptionPane.showMessageDialog(this, "Incorrect values!");
         }
@@ -68,12 +72,10 @@ public class ParamTabFunDialog extends JDialog {
         dispose();
     }
 
-    public double getLeftDomainBorder() {
-        return Double.parseDouble(leftDBTextField.getText());
-    }
+    public double getLeftDomainBorder() { return leftBorder; }
 
     public double getRightDomainBorder() {
-        return Double.parseDouble(rightDBTextField.getText());
+        return rightBorder;
     }
 
     public int getPointsCount() {

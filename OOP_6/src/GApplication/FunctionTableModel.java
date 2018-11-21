@@ -35,9 +35,9 @@ public class FunctionTableModel implements TableModel {
     @Override
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
-            case 1:
+            case 0:
                 return "X";
-            case 2:
+            case 1:
                 return "Y";
             default:
                 throw new IllegalArgumentException("Wrong column index.");
@@ -60,10 +60,10 @@ public class FunctionTableModel implements TableModel {
             return null;
         try {
             switch (columnIndex) {
+                case 0:
+                    return function.getPointX(rowIndex);
                 case 1:
-                    return function.getPointX(rowIndex - 1);
-                case 2:
-                    return function.getPointY(rowIndex - 1);
+                    return function.getPointY(rowIndex);
 
                 default:
                     throw new IllegalArgumentException("Wrong column index.");
@@ -85,9 +85,9 @@ public class FunctionTableModel implements TableModel {
         try {
             switch (columnIndex) {
                 case 1:
-                    function.setPointX(rowIndex - 1, (double) aValue);
+                    function.setPointX(rowIndex, (double) aValue);
                 case 2:
-                    function.setPointY(rowIndex - 1, (double) aValue);
+                    function.setPointY(rowIndex, (double) aValue);
 
                 default:
                     throw new IllegalArgumentException("Wrong column index!");

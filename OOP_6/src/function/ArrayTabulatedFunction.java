@@ -157,10 +157,10 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable, 
     //Удаление точки по индексу
     public void deletePoint(int index) throws FunctionPointIndexOutOfBoundsException, IllegalStateException {
         if (this.countPoints < 3)
-            throw new IllegalStateException("Error!");
+            throw new IllegalStateException("Deletion not possible! There are two points!");
 
         if (index >= this.countPoints)
-            throw new FunctionPointIndexOutOfBoundsException("Error!");
+            throw new FunctionPointIndexOutOfBoundsException("Calling a point on an incorrect index!");
 
         if (this.countPoints - 1 - index >= 0)
             System.arraycopy(points, index + 1, this.points, index, this.countPoints - 1 - index);
