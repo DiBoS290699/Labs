@@ -7,13 +7,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Класс, описывающий в программе документ
+ */
+@SuppressWarnings("ALL")
 public class TabFunDocument implements TabulatedFunction{
-    private TabulatedFunction function;
-    private String fileName;
-    private boolean modified;
-    private boolean fileNameAssigned;
 
-    //Конструктор по умолчанию
+    private TabulatedFunction function;     //Функция, хранящаяся в документе
+    private String fileName;                //Имя документа
+    private boolean modified;               //Изменялась ли функция в процессе работы?
+    private boolean fileNameAssigned;       //Задано ли имя файла для функции?
+
+    /** Конструктор по умолчанию */
     public TabFunDocument() {
         this.function = null;
         this.fileName = null;
@@ -21,19 +26,19 @@ public class TabFunDocument implements TabulatedFunction{
         this.fileNameAssigned = false;
     }
 
-    //Конструктор от файла
+    /** Конструктор от файла */
     public TabFunDocument(String fileName) throws FileNotFoundException {
         loadFunction(fileName);
         this.modified = false;
     }
 
-    //Изменение функции на новую
+    /** Изменение функции на новую */
     public void newFunction(double leftX, double rightX, int pointsCount) {
         this.modified = true;
         this.function = new ArrayTabulatedFunction(leftX, rightX, pointsCount);
     }
 
-    //Сохранение функции в исходный файл
+    /** Сохранение функции в исходный файл */
     public void saveFunction() throws IOException {
         if(!fileNameAssigned) {
             System.err.print("The document name is not specified");
@@ -42,7 +47,7 @@ public class TabFunDocument implements TabulatedFunction{
         TabulatedFunctions.writeTabulatedFunction(function, new FileWriter(fileName));
     }
 
-    //Сохранение функции в выбранный файл
+    /** Сохранение функции в выбранный файл */
     public void saveFunctionAs(String fileName) throws IOException {
         this.fileName = fileName;
         this.fileNameAssigned = true;
@@ -50,13 +55,14 @@ public class TabFunDocument implements TabulatedFunction{
         TabulatedFunctions.writeTabulatedFunction(function, new FileWriter(this.fileName));
     }
 
-    //Загрузка функции из файла
+    /** Загрузка функции из файла */
     public void loadFunction(String fileName) throws FileNotFoundException {
         this.fileName = fileName;
         this.fileNameAssigned = true;
         function = TabulatedFunctions.readTabulatedFunction(new FileReader(fileName));
     }
 
+    /** Создание функции на основе класса, наследующего Function */
     public void tabulateFunction(Function func, double leftX, double rightX, int pointsCount) {
         this.function = TabulatedFunctions.tabulate(func, leftX, rightX, pointsCount);
         this.modified = true;
@@ -137,28 +143,27 @@ public class TabFunDocument implements TabulatedFunction{
         modified = true;
     }
 
-    //Вывод точек из массива
+    /** Вывод точек из массива */
     @Override
     public String toString() {
         return function.toString();
     }
 
-    //Возвращение хешкода функции
+    /** Возвращение хешкода функции */
     @Override
     public int hashCode() {
         return function.hashCode();
     }
 
-    //Сравнивание функций
+    /** Сравнивание функций */
     @Override
     public boolean equals(Object obj) {
         return function.equals(obj);
     }
 
-    //Создание клона функции
+    /** Создание клона функции */
     @Override
     public Object clone() throws CloneNotSupportedException {
         return function.clone();
     }
-
 }

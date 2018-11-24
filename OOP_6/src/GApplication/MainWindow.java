@@ -1,24 +1,25 @@
 package GApplication;
 
+import function.Function;
 import function.FunctionPoint;
 import function.FunctionPointIndexOutOfBoundsException;
 import function.InappropriateFunctionPointException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.regex.Pattern;
 
-@SuppressWarnings({"unused", "FieldCanBeLocal"})
+@SuppressWarnings({"unused", "FieldCanBeLocal", "WeakerAccess"})
 public class MainWindow extends JFrame {
     private ParamTabFunDialog paramDialog;
     private TabFunDocument document;
     private FunctionTableModel tableModel;
     private JFileChooser fileChooser;
+    private FunctionLoader functionLoader;
 
     private JMenuBar menuBar;
 
@@ -43,14 +44,20 @@ public class MainWindow extends JFrame {
     private JTable tableXY;
 
     public MainWindow() {
-        setTitle("Tabulated Functions");
-        setMinimumSize(new Dimension(400, 450));        //Минимальный размер окна
-        setContentPane(mainPanel);
-        setResizable(true);             //Можно изменять размер
-        setDefaultCloseOperation(EXIT_ON_CLOSE);  //Просто так не закрыть
-        setVisible(true);               //Сделать окно видимым
+        //Удаление точки кнопкой клавиатуры
+        tableXY.registerKeyboardAction(e -> onDelete(), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        this.paramDialog = new ParamTabFunDialog();
+        //Добавление точки кнопкой клавиатуры
+        mainPanel.registerKeyboardAction(e -> onAdd(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        setTitle("Tabulated Functions");        //Заголовок главного окна
+        setMinimumSize(new Dimension(400, 450));        //Минимальный размер окна
+        setContentPane(mainPanel);                  //Занесение главной панели
+        setResizable(true);             //Можно изменять размер
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);  //Просто так не закрыть
+
         this.document = new TabFunDocument();
         this.document.newFunction(0, 10, 11);
         this.fileChooser = new JFileChooser();
@@ -58,16 +65,18 @@ public class MainWindow extends JFrame {
         setUpMenuBar();
         setUpButtons();
         setJMenuBar(menuBar);
-        FunctionTableModel table = new FunctionTableModel(document.getFunction(), MainWindow.this);
-        tableXY.setModel(table);
+        setTableXY();
 
         pack();
+        setVisible(true);               //Сделать окно видимым
     }
 
+    /** Тест главного окна */
     public static void main(String[] args) {
         MainWindow window = new MainWindow();
     }
 
+    /** Создание меню-бара */
     private void setUpMenuBar() {
         menuBar = new JMenuBar();       //Создаём меню-бар
 
@@ -88,15 +97,17 @@ public class MainWindow extends JFrame {
         exitItem = new JMenuItem("Exit...");     //Создаём пункт закрытия программы
         exitItem.addActionListener(new ExitItemActionListener());       //Обработка события
 
+        //Занесение в меню File
         fileMenu.add(createItem);
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
         fileMenu.add(saveAsItem);
         fileMenu.add(exitItem);
 
+        //занесение меню File в меню-бар
         menuBar.add(fileMenu);
 
-        tabulateMenu = new JMenu();
+        tabulateMenu = new JMenu("Tabulate");   //Создаём меню Tabulate
 
         tabulateItem = new JMenuItem("Tabulate function...");
         tabulateItem.addActionListener(new TabulateItemActionListener());
@@ -104,6 +115,7 @@ public class MainWindow extends JFrame {
         menuBar.add(tabulateMenu);
     }
 
+    /** Обработка события создания новой функции */
     private class CreateItemActionListener implements ActionListener{
 
         @Override
@@ -117,14 +129,14 @@ public class MainWindow extends JFrame {
                 int pointsCount = paramDialog.getPointsCount();
 
                 document.newFunction(leftDomainBorder, rightDomainBorder, pointsCount);
-                tableModel = new FunctionTableModel(document.getFunction(), MainWindow.this);
-                tableXY.setModel(tableModel);
+                setTableXY();
                 tableXY.revalidate();
                 tableXY.repaint();      //перекрасить таблицу (обновить)
             }
         }
     }
 
+    /** Обработка события открытия файла с функцией */
     private class OpenItemActionListener implements ActionListener{
 
         @Override
@@ -138,13 +150,14 @@ public class MainWindow extends JFrame {
                     tableXY.setModel(tableModel);
                     tableXY.revalidate();
                     tableXY.repaint();      //перекрасить таблицу (обновить)
-                } catch (FileNotFoundException exc) {
-                    JOptionPane.showMessageDialog(MainWindow.this, exc.getMessage());
+                } catch (Throwable exc) {
+                    JOptionPane.showMessageDialog(MainWindow.this, "Incorrect file!");
                 }
             }
         }
     }
 
+    /** Обработка события сохранения функции в файл */
     private class SaveItemActionListener implements ActionListener{
 
         @Override
@@ -169,6 +182,7 @@ public class MainWindow extends JFrame {
         }
     }
 
+    /** Обработка события сохранения функции в новый файл */
     private class SaveAsItemActionListener implements ActionListener {
 
         @Override
@@ -184,6 +198,7 @@ public class MainWindow extends JFrame {
         }
     }
 
+    /** Обработка события закрытия окна */
     private class ExitItemActionListener implements ActionListener{
 
         @Override
@@ -198,6 +213,7 @@ public class MainWindow extends JFrame {
         }
     }
 
+    /** Обработка события закрытия окна */
     private class MainWindowCloseListener implements WindowListener {
 
         @Override
@@ -242,11 +258,68 @@ public class MainWindow extends JFrame {
         }
     }
 
+    /** Обработка события создания функции с помощью класса */
     private class TabulateItemActionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            int fileChooserStatus = fileChooser.showOpenDialog(MainWindow.this);    //Открываем окно "Открыть"
+            if(fileChooserStatus == JFileChooser.APPROVE_OPTION) {      //Если был успешно выбран документ
 
+                paramDialog = new ParamTabFunDialog();
+                if (paramDialog.showDialog() == ParamTabFunDialog.OK) {
+                    double leftDomainBorder = paramDialog.getLeftDomainBorder();
+                    double rightDomainBorder = paramDialog.getRightDomainBorder();
+                    int pointsCount = paramDialog.getPointsCount();
+
+                    String classPath = fileChooser.getSelectedFile().getPath();
+                    String classNameWithExtension = classPath.split(Pattern.quote("\\"))[classPath.split(Pattern.quote("\\")).length-1];
+                    String className = "function." + "basic." + classNameWithExtension.split(Pattern.quote("."))[0];
+                    Function fun;
+                    try {
+                        functionLoader = new FunctionLoader();
+                        Object loadFunction = functionLoader.loadFunction(classPath, className);
+                        fun = (Function) loadFunction;
+                        boolean wrongArg = false;
+                        if(leftDomainBorder < fun.getLeftDomainBorder()) {
+                            leftDomainBorder = fun.getLeftDomainBorder();
+                            wrongArg = true;
+                        }
+                        if(rightDomainBorder > fun.getRightDomainBorder()) {
+                            rightDomainBorder = fun.getRightDomainBorder();
+                            wrongArg = true;
+                        }
+                        if(wrongArg) {
+                            JOptionPane.showMessageDialog(MainWindow.this,
+                                    "Invalid scope");
+                        }
+                        document.tabulateFunction(fun, leftDomainBorder, rightDomainBorder, pointsCount);
+                        setTableXY();
+
+                        tableXY.revalidate();
+                        tableXY.repaint();      //перекрасить таблицу (обновить)
+                    }
+                    catch (IOException e1) {
+                        JOptionPane.showMessageDialog(MainWindow.this,
+                                "Class cannot be considered");
+                        actionPerformed(e);
+                    }
+                    catch (ClassFormatError e1) {
+                        JOptionPane.showMessageDialog(MainWindow.this,
+                                "Invalid format of a class");
+                        actionPerformed(e);
+                    }
+                    catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e1) {
+                        JOptionPane.showMessageDialog(MainWindow.this,
+                                "You cannot create an instance of the class");
+                        actionPerformed(e);
+                    } catch (ClassCastException e1) {
+                        JOptionPane.showMessageDialog(MainWindow.this,
+                                "The class does not implement the Function interface");
+                        actionPerformed(e);
+                    }
+                }
+            }
         }
     }
 
@@ -292,5 +365,10 @@ public class MainWindow extends JFrame {
         }
         else
             JOptionPane.showMessageDialog(MainWindow.this, "You cannot delete a point!");
+    }
+
+    private void setTableXY() {
+        tableModel = new FunctionTableModel(document.getFunction(), MainWindow.this);
+        tableXY.setModel(tableModel);
     }
 }

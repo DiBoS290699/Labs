@@ -1,5 +1,6 @@
 package GApplication;
 
+import function.InappropriateFunctionPointException;
 import function.TabulatedFunction;
 
 import javax.swing.*;
@@ -8,18 +9,21 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 
 public class FunctionTableModel implements TableModel {
-    TabulatedFunction function;
-    Component parent;
+    private TabulatedFunction function;     //Ссылка на нашу функцию
+    private Component parent;       //Ссылка на окно родителя
 
+    /** Кокнструктор инициализации */
     public FunctionTableModel(TabulatedFunction func, Component par) {
         this.function = func;
         this.parent = par;
     }
 
+    /** Гетер функции */
     public TabulatedFunction getFunction() {
         return this.function;
     }
 
+    /** Гетер количества точек (Оно равно количеству строк) */
     @Override
     public int getRowCount() {
         if (function == null)
@@ -27,11 +31,13 @@ public class FunctionTableModel implements TableModel {
         return this.function.getPointsCount();
     }
 
+    /** Гетер количества столбцов */
     @Override
     public int getColumnCount() {
         return 2;
     }
 
+    /** Гетер имени столбца по индексу */
     @Override
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
@@ -44,16 +50,19 @@ public class FunctionTableModel implements TableModel {
         }
     }
 
+    /** Гетер класса значений */
     @Override
     public Class getColumnClass(int columnIndex) {
         return Double.class;
     }
 
+    /** Можно ли изменить указанную точку? (Всегда можно) */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true;
     }
 
+    /** Гетер значения выделенной ячейки */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (function == null)
@@ -75,34 +84,43 @@ public class FunctionTableModel implements TableModel {
         }
     }
 
+    /** Сетер значения внутри ячейки по данным координатам */
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if(!(aValue instanceof Integer) && !(aValue instanceof Double))
             JOptionPane.showMessageDialog(this.parent, "Incorrect value!");
 
-        if(!isCellEditable(rowIndex, columnIndex))
-            JOptionPane.showMessageDialog(this.parent, "Invalid index!");
+        //Так как изменять можно любую точку, то эта проверка не нужна
+        /* if(!isCellEditable(rowIndex, columnIndex))
+            JOptionPane.showMessageDialog(this.parent, "Invalid index!"); */
+
         try {
             switch (columnIndex) {
-                case 1:
+                case 0:
                     function.setPointX(rowIndex, (double) aValue);
-                case 2:
+                    break;
+                case 1:
                     function.setPointY(rowIndex, (double) aValue);
+                    break;
 
                 default:
                     throw new IllegalArgumentException("Wrong column index!");
             }
         }
-        catch (Throwable e) {
-            JOptionPane.showMessageDialog(parent, "Invalid index!");
+        catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(parent, "Wrong column index!");
+        } catch (InappropriateFunctionPointException e) {
+            JOptionPane.showMessageDialog(parent, "Wrong value!");
         }
     }
 
+    /** Данный метод не используется в моей программе */
     @Override
     public void addTableModelListener(TableModelListener l) {
         //TODO
     }
 
+    /** Данный метод не используется в моей программе */
     @Override
     public void removeTableModelListener(TableModelListener l) {
         //TODO

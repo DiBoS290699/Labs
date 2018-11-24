@@ -122,28 +122,46 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable, 
     public void setPoint(int index, FunctionPoint point)
             throws FunctionPointIndexOutOfBoundsException, InappropriateFunctionPointException {
         if (index >= this.countPoints)
-            throw new FunctionPointIndexOutOfBoundsException("Error!");
+            throw new FunctionPointIndexOutOfBoundsException("Invalid count points!");
 
-        if (index == 0 && this.points[index + 1].getX() < point.getX() ||
-                index == this.countPoints - 1 && this.points[index - 1].getX() > point.getX() ||
-                this.points[index - 1].getX() > point.getX() && this.points[index + 1].getX() < point.getX())
-            throw new InappropriateFunctionPointException("Error!");
-
-        this.points[index] = new FunctionPoint(point);
+        if (index == 0) {
+            if (this.points[1].getX() < point.getX())
+                throw new InappropriateFunctionPointException("Violation of the sequence!");    //Нарушение последовательности
+            else this.points[index] = new FunctionPoint(point);
+        }
+        if(index == this.countPoints - 1) {
+            if (this.points[index - 1].getX() > point.getX())
+                throw new InappropriateFunctionPointException("Violation of the sequence!");    //Нарушение последовательности
+            else this.points[index] = new FunctionPoint(point);
+        }
+        else {
+            if (this.points[index - 1].getX() > point.getX() || this.points[index + 1].getX() < point.getX())
+                throw new InappropriateFunctionPointException("Violation of the sequence!");    //Нарушение последовательности
+            else this.points[index] = new FunctionPoint(point);
+        }
     }
 
     //Сетер х точки по индексу
     public void setPointX(int index, double x)
             throws FunctionPointIndexOutOfBoundsException, InappropriateFunctionPointException {
         if (index >= this.countPoints)
-            throw new FunctionPointIndexOutOfBoundsException("Error!");
+            throw new FunctionPointIndexOutOfBoundsException("Invalid count points!");
 
-        if (index == 0 && this.points[index + 1].getX() < x ||
-                index == this.countPoints - 1 && this.points[index - 1].getX() > x ||
-                this.points[index - 1].getX() > x && this.points[index + 1].getX() < x)
-            throw new InappropriateFunctionPointException("Error!");
-
-        this.points[index].setX(x);
+        if (index == 0) {
+            if (this.points[1].getX() < x)
+                throw new InappropriateFunctionPointException("Violation of the sequence!");    //Нарушение последовательности
+            else this.points[index].setX(x);
+        }
+        if(index == this.countPoints - 1) {
+            if (this.points[index - 1].getX() > x)
+                throw new InappropriateFunctionPointException("Violation of the sequence!");    //Нарушение последовательности
+            else this.points[index].setX(x);
+        }
+        else {
+            if (this.points[index - 1].getX() > x || this.points[index + 1].getX() < x)
+                throw new InappropriateFunctionPointException("Violation of the sequence!");    //Нарушение последовательности
+            else this.points[index].setX(x);
+        }
     }
 
     //Сетер у точки по индексу
