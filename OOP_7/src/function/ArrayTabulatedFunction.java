@@ -207,7 +207,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Serializable, 
         } else {  //Если совпадений с х не найдено и в массиве ещё есть место, то сдвигаем вправо начиная с ind+1
 
             if (this.countPoints - ind + 1 >= 0)
-                System.arraycopy(this.points, ind, this.points, ind + 1, this.countPoints - ind);
+                System.arraycopy(this.points, ind + 1, this.points, ind + 2, this.countPoints - ind + 1);
 
             this.points[ind + 1] = point;
         }

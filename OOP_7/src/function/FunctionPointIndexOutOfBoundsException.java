@@ -1,0 +1,7 @@
+package function;
+
+public class FunctionPointIndexOutOfBoundsException extends IndexOutOfBoundsException {
+    public FunctionPointIndexOutOfBoundsException(String msg) {
+        super(msg);
+    }
+}
