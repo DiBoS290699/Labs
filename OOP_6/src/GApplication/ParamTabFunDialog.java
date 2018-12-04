@@ -103,6 +103,5 @@ public class ParamTabFunDialog extends JDialog {
     public static void main(String[] args) {
         ParamTabFunDialog dialog = new ParamTabFunDialog();
         dialog.showDialog();
-        System.exit(0);
     }
 }

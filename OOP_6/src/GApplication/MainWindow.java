@@ -56,7 +56,6 @@ public class MainWindow extends JFrame {
         setMinimumSize(new Dimension(400, 450));        //Минимальный размер окна
         setContentPane(mainPanel);                  //Занесение главной панели
         setResizable(true);             //Можно изменять размер
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);  //Просто так не закрыть
 
         this.document = new TabFunDocument();
         this.document.newFunction(0, 10, 11);
@@ -66,6 +65,20 @@ public class MainWindow extends JFrame {
         setUpButtons();
         setJMenuBar(menuBar);
         setTableXY();
+
+        //Нажатие на кнопку закрытия окна
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                if (document.isModified()) {
+                    if(JOptionPane.showConfirmDialog(MainWindow.this,
+                            "Document is not saved. Are you sure you want to exit?") == JOptionPane.OK_OPTION){
+                        dispose();
+                    }
+                }
+                else dispose();
+            }
+        });
 
         pack();
         setVisible(true);               //Сделать окно видимым
@@ -273,7 +286,8 @@ public class MainWindow extends JFrame {
                     int pointsCount = paramDialog.getPointsCount();
 
                     String classPath = fileChooser.getSelectedFile().getPath();
-                    String classNameWithExtension = classPath.split(Pattern.quote("\\"))[classPath.split(Pattern.quote("\\")).length-1];
+                    String classNameWithExtension =
+                            classPath.split(Pattern.quote("\\"))[classPath.split(Pattern.quote("\\")).length-1];
                     String className = "function." + "basic." + classNameWithExtension.split(Pattern.quote("."))[0];
                     Function fun;
                     try {
